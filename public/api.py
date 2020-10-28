@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import json
 
 app = Flask(__name__)
 
@@ -8,27 +9,29 @@ def index():
     return "Hello World!"
 
 
-# TODO: change to POST with json body
-# TODO: return ngram model as json
-@app.route("/ngram-text-generator-api/build-model", methods=['GET'])
+@app.route("/ngram-text-generator-api/build-model", methods=['POST'])
 def build_model():
-    order = int(request.args.get('order'))
-    training_text = request.args.get('training-text')
+    request_data = request.json
+    order = request_data["order"]
+    training_text = request_data["training_text"]
+    # TODO: replace dummy response by ngram model
     return jsonify(
         order=order,
         training_text=training_text
     )
 
 
-# TODO: change to POST with json body
-# TODO: provide ngram model as json
-@app.route("/ngram-text-generator-api/generate-text", methods=['GET'])
+@app.route("/ngram-text-generator-api/generate-text", methods=['POST'])
 def generate_text():
-    start_text = request.args.get("start-text")
-    text_length = int(request.args.get("text-length"))
+    request_data = request.json
+    start_text = request_data["start_text"]
+    text_length = request_data["text_length"]
+    model = request_data["model"]
+    # TODO: replace dummy response by generated text
     return jsonify(
         start_text=start_text,
-        text_length=text_length
+        text_length=text_length,
+        model=model
     )
 
 
