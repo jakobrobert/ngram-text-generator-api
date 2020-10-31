@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 
+from dictionary import Dictionary
+
 # special chars which are concatenated to the previous with a separation by space
 SPECIAL_CHARS_WITH_SEPARATION = ["(", "[", "{", "\""]
 
@@ -11,6 +13,7 @@ SPECIAL_CHARS = SPECIAL_CHARS_WITH_SEPARATION + SPECIAL_CHARS_WITHOUT_SEPARATION
 
 app = Flask(__name__)
 
+
 @app.route("/ngram-text-generator-api")
 def index():
     return "Hello World!"
@@ -21,11 +24,19 @@ def build_model():
     request_data = request.json
     order = request_data["order"]
     training_text = request_data["training_text"]
-    tokens = preprocess_text(training_text)
-    # TODO: replace dummy response by ngram model
+
+    filtered_text = filter_text(training_text)
+    tokens = tokenize(filtered_text)
+    dictionary = build_dictionary(tokens)
+    token_ids = convert_tokens_from_string_to_id(dictionary, tokens)
+
+    # TODO: replace debug response by ngram model
     return jsonify(
         order=order,
-        tokens=tokens
+        training_text=training_text,
+        filtered_text=filtered_text,
+        tokens=tokens,
+        token_ids=token_ids
     )
 
 
@@ -46,7 +57,7 @@ def generate_text():
 def preprocess_text(text):
     filtered_text = filter_text(text)
     tokens = tokenize(filtered_text)
-    # TODO: build dictionary
+    dictionary = build_dictionary(tokens)
     return tokens
 
 
@@ -89,6 +100,21 @@ def tokenize(text):
         tokens.append(token)
 
     return tokens
+
+
+def build_dictionary(tokens):
+    dictionary = Dictionary()
+    for token in tokens:
+        dictionary.add_token(token)
+    return dictionary
+
+
+def convert_tokens_from_string_to_id(dictionary, tokens):
+    ids = []
+    for token in tokens:
+        id_ = dictionary.id_of_token(token)
+        ids.append(id_)
+    return ids
 
 
 if __name__ == "__main__":
