@@ -26,7 +26,7 @@ class NGram:
                 return False
         return True
 
-    def random_prediction(self):
+    def pick_random_prediction(self):
         value = random.random()
         for prediction in self.predictions:
             if value < prediction.probability_threshold:
