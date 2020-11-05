@@ -27,28 +27,25 @@ def build_model():
     model = NGramModel(order)
     model.build_model_from_tokens(token_ids)
 
-    # TODO: replace debug response by ngram model alone
-    return jsonify(
-        order=order,
-        training_text=training_text,
-        filtered_text=filtered_text,
-        tokens=tokens,
-        token_ids=token_ids,
-        model=model.to_dict()
-    )
+    return jsonify(model.to_dict())
 
 
 @app.route("/ngram-text-generator-api/generate-text", methods=['POST'])
 def generate_text():
     request_data = request.json
-    model = request_data["model"]
     start_text = request_data["start_text"]
     text_length = request_data["text_length"]
+    model_data = request_data["model"]
+
+    # TODO: generate text
+    model = NGramModel.from_dict(model_data)
+
     # TODO: replace dummy response by generated text
     return jsonify(
-        model=model,
         start_text=start_text,
-        text_length=text_length
+        text_length=text_length,
+        model=model.to_dict(),
+        text="Test"
     )
 
 

@@ -18,7 +18,9 @@ class NGramModel:
 
             ngram = self.find_ngram_by_history(history)
             if ngram is None:
-                self.ngrams.append(NGram(history, prediction))
+                ngram = NGram(history)
+                ngram.add_prediction(prediction)
+                self.ngrams.append(ngram)
             else:
                 ngram.add_prediction(prediction)
 
@@ -40,6 +42,13 @@ class NGramModel:
             curr_history = tokens[-(self.order - 1):]
 
         return tokens
+
+    @staticmethod
+    def from_dict(data):
+        order = data["order"]
+        model = NGramModel(order)
+        model.ngrams = [NGram.from_dict(ngram) for ngram in data["ngrams"]]
+        return model
 
     def to_dict(self):
         return {

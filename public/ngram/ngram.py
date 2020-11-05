@@ -4,10 +4,9 @@ from ngram.ngram_prediction import NGramPrediction
 
 
 class NGram:
-    def __init__(self, history, prediction):
+    def __init__(self, history):
         self.history = history
         self.predictions = []
-        self.predictions.append(NGramPrediction(prediction))
 
     def add_prediction(self, token):
         index = self.find_prediction_by_token(token)
@@ -44,6 +43,13 @@ class NGram:
             probability_threshold += probability
             prediction.probability = probability
             prediction.probability_threshold = probability_threshold
+
+    @staticmethod
+    def from_dict(data):
+        history = data["history"]
+        ngram = NGram(history)
+        ngram.predictions = [NGramPrediction.from_dict(prediction) for prediction in data["predictions"]]
+        return ngram
 
     def to_dict(self):
         return {
