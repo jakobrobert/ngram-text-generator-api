@@ -12,6 +12,7 @@ class TextProcessor:
     SPECIAL_CHARS = SPECIAL_CHARS_WITH_SEPARATION + SPECIAL_CHARS_WITHOUT_SEPARATION
 
     def __init__(self):
+        # TODO: saving dictionary as member does not really make sense, need to create new object for new API call anyway
         self.dictionary = None
 
     def filter_text(self, text):
@@ -58,9 +59,37 @@ class TextProcessor:
         for token in tokens:
             self.dictionary.add_token(token)
 
-    def convert_tokens_to_ids(self, tokens):
+    def convert_tokens_from_string_to_id(self, tokens):
         ids = []
         for token in tokens:
             id_ = self.dictionary.id_of_token(token)
             ids.append(id_)
         return ids
+
+    def convert_tokens_from_id_to_string(self, ids):
+        tokens = []
+        for id_ in ids:
+            token = self.dictionary.token_by_id(id_)
+            tokens.append(token)
+        return tokens
+
+    def concatenate_tokens(self, tokens):
+        if len(tokens) == 0:
+            return ""
+
+        text = tokens[0]
+
+        for i in range(1, len(tokens)):
+            curr_token = tokens[i]
+            prev_token = tokens[i - 1]
+            if curr_token in TextProcessor.SPECIAL_CHARS_WITHOUT_SEPARATION:
+                text += curr_token
+            else:
+                # for both cases, special chars with separation and normal words, separate by space
+                # but only if previous token was not a special char with separation
+                # e.g. "bla (hello)" should be separate "(" by space, but not "hello"
+                if prev_token not in TextProcessor.SPECIAL_CHARS_WITH_SEPARATION:
+                    text += " "
+                text += curr_token
+
+        return text

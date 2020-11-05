@@ -22,7 +22,7 @@ def build_model():
     filtered_text = processor.filter_text(training_text)
     tokens = processor.tokenize(filtered_text)
     processor.build_dictionary(tokens)
-    token_ids = processor.convert_tokens_to_ids(tokens)
+    token_ids = processor.convert_tokens_from_string_to_id(tokens)
 
     model = NGramModel(order)
     model.build_model_from_tokens(token_ids)
@@ -34,18 +34,22 @@ def build_model():
 def generate_text():
     request_data = request.json
     start_text = request_data["start_text"]
-    text_length = request_data["text_length"]
+    length = request_data["length"]
     model_data = request_data["model"]
 
-    # TODO: generate text
     model = NGramModel.from_dict(model_data)
+
+    # TODO: start history hardcoded, need dictionary to convert start text to token ids
+    # and needed to convert token ids to text
+    start_history = [0, 1]
+    token_ids = model.generate_tokens(start_history, length)
 
     # TODO: replace dummy response by generated text
     return jsonify(
         start_text=start_text,
-        text_length=text_length,
+        length=length,
         model=model.to_dict(),
-        text="Test"
+        token_ids=token_ids
     )
 
 
