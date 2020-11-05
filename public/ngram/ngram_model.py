@@ -41,6 +41,12 @@ class NGramModel:
 
         return tokens
 
+    def to_dict(self):
+        return {
+            "order": self.order,
+            "ngrams": [ngram.to_dict() for ngram in self.ngrams]
+        }
+
     def find_ngram_by_history(self, history):
         for ngram in self.ngrams:
             if ngram.matches_history(history):

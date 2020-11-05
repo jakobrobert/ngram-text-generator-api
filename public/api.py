@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 
+from ngram.ngram_model import NGramModel
 from text_processor import TextProcessor
 
 app = Flask(__name__)
@@ -23,13 +24,17 @@ def build_model():
     processor.build_dictionary(tokens)
     token_ids = processor.convert_tokens_to_ids(tokens)
 
-    # TODO: replace debug response by ngram model
+    model = NGramModel(order)
+    model.build_model_from_tokens(token_ids)
+
+    # TODO: replace debug response by ngram model alone
     return jsonify(
         order=order,
         training_text=training_text,
         filtered_text=filtered_text,
         tokens=tokens,
-        token_ids=token_ids
+        token_ids=token_ids,
+        model=model.to_dict()
     )
 
 

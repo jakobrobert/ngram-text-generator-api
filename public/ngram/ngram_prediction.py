@@ -11,3 +11,10 @@ class NGramPrediction:
     def increment_frequency(self):
         self.frequency += 1
 
+    def to_dict(self):
+        return {
+            "token": self.token,
+            "frequency": self.frequency,
+            "probability": self.probability,
+            "probability_threshold:": self.probability_threshold
+        }

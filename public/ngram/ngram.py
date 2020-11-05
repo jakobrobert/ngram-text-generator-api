@@ -33,13 +33,6 @@ class NGram:
                 return prediction.token
         return self.predictions[-1]
 
-    # TODO Refactor: return prediction (or None) instead of index
-    def find_prediction_by_token(self, token):
-        for i in range(0, len(self.predictions)):
-            if self.predictions[i].matches_token(token):
-                return i
-        return -1
-
     def calculate_probabilities(self):
         total_prediction_count = 0
         for prediction in self.predictions:
@@ -51,3 +44,16 @@ class NGram:
             probability_threshold += probability
             prediction.probability = probability
             prediction.probability_threshold = probability_threshold
+
+    def to_dict(self):
+        return {
+            "history": self.history,
+            "predictions": [prediction.to_dict() for prediction in self.predictions]
+        }
+
+    # TODO Refactor: return prediction (or None) instead of index
+    def find_prediction_by_token(self, token):
+        for i in range(0, len(self.predictions)):
+            if self.predictions[i].matches_token(token):
+                return i
+        return -1
