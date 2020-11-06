@@ -48,8 +48,6 @@ def generate_text():
 
     # TODO: replace dummy response by generated text
     return jsonify(
-        token_ids=token_ids,
-        tokens=tokens,
         text=text
     )
 
