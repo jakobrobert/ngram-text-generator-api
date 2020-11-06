@@ -10,11 +10,9 @@ class NGramModel:
         self.ngrams = []
 
         for i in range(0, len(tokens) - (self.order - 1)):
-            # TODO Refactor: replace by slicing
-            history = []
-            for j in range(0, self.order - 1):
-                history.append(tokens[i + j])
-            prediction = tokens[i + self.order - 1]
+            history_end = i + self.order - 1
+            history = tokens[i:history_end]
+            prediction = tokens[history_end]
 
             ngram = self.find_ngram_by_history(history)
             if ngram is None:
@@ -45,7 +43,6 @@ class NGramModel:
 
     @staticmethod
     def from_dict(data):
-        print(data)
         order = data["order"]
         model = NGramModel(order)
         model.ngrams = [NGram.from_dict(ngram) for ngram in data["ngrams"]]
