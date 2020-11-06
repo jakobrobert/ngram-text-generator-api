@@ -45,6 +45,7 @@ class NGramModel:
 
     @staticmethod
     def from_dict(data):
+        print(data)
         order = data["order"]
         model = NGramModel(order)
         model.ngrams = [NGram.from_dict(ngram) for ngram in data["ngrams"]]

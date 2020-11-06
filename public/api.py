@@ -38,19 +38,19 @@ def generate_text():
     start_text = request_data["start_text"]
     length = request_data["length"]
     model = NGramModel.from_dict(request_data["model"])
-    dictionary = NGramModel.from_dict(request_data["dictionary"])
+    dictionary = Dictionary.from_dict(request_data["dictionary"])
 
-    # TODO: start history hardcoded, need dictionary to convert start text to token ids
-    # and needed to convert token ids to text
-    start_history = [0, 1]
-    token_ids = model.generate_tokens(start_history, length)
+    start_history_tokens = TextProcessor.tokenize(start_text)
+    start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
+    token_ids = model.generate_tokens(start_history_ids, length)
+    tokens = TextProcessor.convert_tokens_from_id_to_string(token_ids, dictionary)
+    text = TextProcessor.concat_tokens_to_text(tokens)
 
     # TODO: replace dummy response by generated text
     return jsonify(
-        start_text=start_text,
-        length=length,
-        model=model.to_dict(),
-        token_ids=token_ids
+        token_ids=token_ids,
+        tokens=tokens,
+        text=text
     )
 
 

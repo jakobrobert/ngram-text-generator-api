@@ -76,7 +76,7 @@ class TextProcessor:
         return tokens
 
     @staticmethod
-    def concatenate_tokens(tokens):
+    def concat_tokens_to_text(tokens):
         if len(tokens) == 0:
             return ""
 
