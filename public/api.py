@@ -47,7 +47,6 @@ def generate_text():
     tokens = TextProcessor.convert_tokens_from_id_to_string(token_ids, dictionary)
     text = TextProcessor.concat_tokens_to_text(tokens)
 
-    # TODO: replace dummy response by generated text
     return jsonify(
         text=text,
         token_count=len(tokens)
