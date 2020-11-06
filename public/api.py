@@ -28,7 +28,8 @@ def build_model():
 
     return jsonify(
         model=model.to_dict(),
-        dictionary=dictionary.to_dict()
+        dictionary=dictionary.to_dict(),
+        token_count=len(tokens)
     )
 
 
@@ -48,7 +49,8 @@ def generate_text():
 
     # TODO: replace dummy response by generated text
     return jsonify(
-        text=text
+        text=text,
+        token_count=len(tokens)
     )
 
 
