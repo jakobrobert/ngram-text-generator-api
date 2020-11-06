@@ -11,15 +11,13 @@ class TextProcessor:
     # all special chars, no distinction necessary for building the model
     SPECIAL_CHARS = SPECIAL_CHARS_WITH_SEPARATION + SPECIAL_CHARS_WITHOUT_SEPARATION
 
-    def __init__(self):
-        # TODO: saving dictionary as member does not really make sense, need to create new object for new API call anyway
-        self.dictionary = None
-
-    def filter_text(self, text):
+    @staticmethod
+    def filter_text(text):
         # remove all "\r" (carriage return)
         return text.replace("\r", "")
 
-    def tokenize(self, text):
+    @staticmethod
+    def tokenize(text):
         tokens = []
         current = 0
         token_start = 0
@@ -54,26 +52,31 @@ class TextProcessor:
 
         return tokens
 
-    def build_dictionary(self, tokens):
-        self.dictionary = Dictionary()
+    @staticmethod
+    def build_dictionary(tokens):
+        dictionary = Dictionary()
         for token in tokens:
-            self.dictionary.add_token(token)
+            dictionary.add_token(token)
+        return dictionary
 
-    def convert_tokens_from_string_to_id(self, tokens):
+    @staticmethod
+    def convert_tokens_from_string_to_id(tokens, dictionary):
         ids = []
         for token in tokens:
-            id_ = self.dictionary.id_of_token(token)
+            id_ = dictionary.id_of_token(token)
             ids.append(id_)
         return ids
 
-    def convert_tokens_from_id_to_string(self, ids):
+    @staticmethod
+    def convert_tokens_from_id_to_string(ids, dictionary):
         tokens = []
         for id_ in ids:
-            token = self.dictionary.token_by_id(id_)
+            token = dictionary.token_by_id(id_)
             tokens.append(token)
         return tokens
 
-    def concatenate_tokens(self, tokens):
+    @staticmethod
+    def concatenate_tokens(tokens):
         if len(tokens) == 0:
             return ""
 
