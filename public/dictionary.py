@@ -14,3 +14,16 @@ class Dictionary:
 
     def token_by_id(self, id_):
         return self.tokens[id_]
+
+    @staticmethod
+    def from_dict(data):
+        dictionary = Dictionary()
+        dictionary.token_ids = data["token_ids"]
+        dictionary.tokens = data["tokens"]
+        return dictionary
+
+    def to_dict(self):
+        return {
+            "token_ids": self.token_ids,
+            "tokens": self.tokens
+        }

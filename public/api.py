@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 
+from dictionary import Dictionary
 from ngram.ngram_model import NGramModel
 from text_processor import TextProcessor
 
@@ -25,7 +26,10 @@ def build_model():
     model = NGramModel(order)
     model.build_model_from_tokens(token_ids)
 
-    return jsonify(model.to_dict())
+    return jsonify(
+        model=model.to_dict(),
+        dictionary=dictionary.to_dict()
+    )
 
 
 @app.route("/ngram-text-generator-api/generate-text", methods=['POST'])
@@ -33,9 +37,8 @@ def generate_text():
     request_data = request.json
     start_text = request_data["start_text"]
     length = request_data["length"]
-    model_data = request_data["model"]
-
-    model = NGramModel.from_dict(model_data)
+    model = NGramModel.from_dict(request_data["model"])
+    dictionary = NGramModel.from_dict(request_data["dictionary"])
 
     # TODO: start history hardcoded, need dictionary to convert start text to token ids
     # and needed to convert token ids to text
