@@ -6,7 +6,6 @@ from ngram.ngram_model import NGramModel
 from text_processor import TextProcessor
 
 app = Flask(__name__)
-app.config["TESTING"] = True
 
 
 @app.route("/ngram-text-generator-api")
