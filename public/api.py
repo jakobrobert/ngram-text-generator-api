@@ -29,7 +29,7 @@ def build_model():
     dictionary = TextProcessor.build_dictionary(tokens)
     token_ids = TextProcessor.convert_tokens_from_string_to_id(tokens, dictionary)
     elapsed_time = int((time.clock() - start_time) * 1000)
-    print("Text processing (ms): " + str(elapsed_time))
+    print("Pre-processing (ms): " + str(elapsed_time))
 
     start_time = time.clock()
     model = NGramModel(order)
@@ -60,11 +60,9 @@ def generate_text():
     elapsed_time = int((time.clock() - start_time) * 1000)
     print("Deserialization (ms): " + str(elapsed_time))
 
-    start_time = time.clock()
+    # only a few tokens, not worth measuring time
     start_history_tokens = TextProcessor.tokenize(start_text)
     start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
-    elapsed_time = int((time.clock() - start_time) * 1000)
-    print("Convert start text to tokens (ms): " + str(elapsed_time))
 
     start_time = time.clock()
     token_ids = model.generate_tokens(start_history_ids, length)
@@ -75,7 +73,7 @@ def generate_text():
     tokens = TextProcessor.convert_tokens_from_id_to_string(token_ids, dictionary)
     text = TextProcessor.concat_tokens_to_text(tokens)
     elapsed_time = int((time.clock() - start_time) * 1000)
-    print("Convert tokens to text (ms): " + str(elapsed_time))
+    print("Post-processing (ms): " + str(elapsed_time))
 
     start_time = time.clock()
     response = jsonify(
