@@ -31,7 +31,9 @@ def main():
 
     model, dictionary = build_model(training_text, order)
     generated_text = generate_text(model, dictionary, start_text, text_length)#
-    print(generated_text)
+
+    with open(output_path, "w", encoding="utf8", newline="") as file:
+        file.write(generated_text)
 
 
 def build_model(training_text, order):
