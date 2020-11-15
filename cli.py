@@ -1,4 +1,5 @@
 import argparse
+import time
 
 from public.ngram.ngram_model import NGramModel
 from public.text_processor import TextProcessor
@@ -30,20 +31,26 @@ def main():
         training_text = file.read()
 
     model, dictionary = build_model(training_text, order)
-    generated_text = generate_text(model, dictionary, start_text, text_length)#
+    generated_text = generate_text(model, dictionary, start_text, text_length)
 
     with open(output_path, "w", encoding="utf8", newline="") as file:
         file.write(generated_text)
 
 
 def build_model(training_text, order):
+    start_time = time.clock()
     filtered_text = TextProcessor.filter_text(training_text)
     tokens = TextProcessor.tokenize(filtered_text)
     dictionary = TextProcessor.build_dictionary(tokens)
     token_ids = TextProcessor.convert_tokens_from_string_to_id(tokens, dictionary)
+    elapsed_time = int((time.clock() - start_time) * 1000)
+    print("Pre-processing (ms): " + str(elapsed_time))
 
+    start_time = time.clock()
     model = NGramModel(order)
     model.build_model_from_tokens(token_ids)
+    elapsed_time = int((time.clock() - start_time) * 1000)
+    print("Build model (ms): " + str(elapsed_time))
 
     return model, dictionary
 
@@ -53,10 +60,16 @@ def generate_text(model, dictionary, start_text, length):
     start_history_tokens = TextProcessor.tokenize(start_text)
     start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
 
+    start_time = time.clock()
     token_ids = model.generate_tokens(start_history_ids, length)
+    elapsed_time = int((time.clock() - start_time) * 1000)
+    print("Generate tokens (ms): " + str(elapsed_time))
 
+    start_time = time.clock()
     tokens = TextProcessor.convert_tokens_from_id_to_string(token_ids, dictionary)
     text = TextProcessor.concat_tokens_to_text(tokens)
+    elapsed_time = int((time.clock() - start_time) * 1000)
+    print("Post-processing (ms): " + str(elapsed_time))
 
     return text
 
