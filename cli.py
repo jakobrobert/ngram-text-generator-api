@@ -1,5 +1,8 @@
 import argparse
 
+from public.ngram.ngram_model import NGramModel
+from public.text_processor import TextProcessor
+
 
 def main():
     parser = argparse.ArgumentParser(description="Train an n-gram model based on a given text and generate a new text")
@@ -17,7 +20,29 @@ def main():
                                help="The desired text length in tokens")
     args = parser.parse_args()
 
-    print(args)
+    input_path = args.input
+    output_path = args.output
+    order = args.order
+    start_text = args.start
+    text_length = args.length
+
+    with open(input_path, "r", encoding="utf8") as file:
+        training_text = file.read()
+
+    model = build_model(training_text, order)
+    print(model.to_dict())
+
+
+def build_model(training_text, order):
+    filtered_text = TextProcessor.filter_text(training_text)
+    tokens = TextProcessor.tokenize(filtered_text)
+    dictionary = TextProcessor.build_dictionary(tokens)
+    token_ids = TextProcessor.convert_tokens_from_string_to_id(tokens, dictionary)
+
+    model = NGramModel(order)
+    model.build_model_from_tokens(token_ids)
+
+    return model
 
 
 if __name__ == "__main__":
