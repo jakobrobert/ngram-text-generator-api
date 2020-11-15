@@ -1,4 +1,4 @@
-from dictionary import Dictionary
+from .dictionary import Dictionary
 
 
 class TextProcessor:

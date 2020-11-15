@@ -1,6 +1,6 @@
 import random
 
-from ngram.ngram_prediction import NGramPrediction
+from .ngram_prediction import NGramPrediction
 
 
 class NGram:

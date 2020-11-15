@@ -1,4 +1,4 @@
-from ngram.ngram import NGram
+from .ngram import NGram
 
 
 class NGramModel:
