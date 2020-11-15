@@ -29,8 +29,9 @@ def main():
     with open(input_path, "r", encoding="utf8") as file:
         training_text = file.read()
 
-    model = build_model(training_text, order)
-    print(model.to_dict())
+    model, dictionary = build_model(training_text, order)
+    generated_text = generate_text(model, dictionary, start_text, text_length)#
+    print(generated_text)
 
 
 def build_model(training_text, order):
@@ -42,7 +43,20 @@ def build_model(training_text, order):
     model = NGramModel(order)
     model.build_model_from_tokens(token_ids)
 
-    return model
+    return model, dictionary
+
+
+def generate_text(model, dictionary, start_text, length):
+    # only a few tokens, not worth measuring time
+    start_history_tokens = TextProcessor.tokenize(start_text)
+    start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
+
+    token_ids = model.generate_tokens(start_history_ids, length)
+
+    tokens = TextProcessor.convert_tokens_from_id_to_string(token_ids, dictionary)
+    text = TextProcessor.concat_tokens_to_text(tokens)
+
+    return text
 
 
 if __name__ == "__main__":
