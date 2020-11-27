@@ -58,7 +58,6 @@ def main():
         file.write(generated_text)
 
 
-@profile
 def build_model(training_text, order):
     start_time = time.process_time()
     filtered_text = TextProcessor.filter_text(training_text)
@@ -77,7 +76,6 @@ def build_model(training_text, order):
     return model, dictionary
 
 
-@profile
 def generate_text(model, dictionary, start_text, length):
     # only a few tokens, not worth measuring time
     start_history_tokens = TextProcessor.tokenize(start_text)
