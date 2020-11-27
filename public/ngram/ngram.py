@@ -18,8 +18,6 @@ class NGram:
             prediction.increment_frequency()
 
     def matches_history(self, history):
-        if len(self.history) != len(history):
-            return False
         for i in range(0, len(self.history)):
             if self.history[i] != history[i]:
                 return False
