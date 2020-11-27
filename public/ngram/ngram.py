@@ -6,6 +6,7 @@ from .ngram_prediction import NGramPrediction
 class NGram:
     def __init__(self, history):
         self.history = history
+        self.history_length = len(self.history)  # cache length for performance
         self.predictions = []
 
     def add_prediction(self, token):
@@ -18,7 +19,7 @@ class NGram:
             prediction.increment_frequency()
 
     def matches_history(self, history):
-        for i in range(0, len(self.history)):
+        for i in range(0, self.history_length):
             if self.history[i] != history[i]:
                 return False
         return True
