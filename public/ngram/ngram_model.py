@@ -56,6 +56,6 @@ class NGramModel:
 
     def find_ngram_by_history(self, history):
         for ngram in self.ngrams:
-            if ngram.matches_history(history):
+            if ngram.history == history:
                 return ngram
         return None

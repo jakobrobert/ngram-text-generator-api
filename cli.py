@@ -4,6 +4,27 @@ import time
 from public.ngram.ngram_model import NGramModel
 from public.text_processor import TextProcessor
 
+# imports for profiler
+import cProfile
+import pstats
+import io
+
+
+# decorator to profile a function
+def profile(func):
+    def inner(*args, **kwargs):
+        pr = cProfile.Profile()
+        pr.enable()
+        ret = func(*args, **kwargs)
+        pr.disable()
+        s = io.StringIO()
+        sortby = "cumulative"
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print(s.getvalue())
+        return ret
+    return inner
+
 
 def main():
     parser = argparse.ArgumentParser(description="Train an n-gram model based on a given text and generate a new text")

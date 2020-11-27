@@ -17,14 +17,6 @@ class NGram:
             prediction = self.predictions[index]
             prediction.increment_frequency()
 
-    def matches_history(self, history):
-        if len(self.history) != len(history):
-            return False
-        for i in range(0, len(self.history)):
-            if self.history[i] != history[i]:
-                return False
-        return True
-
     def pick_random_prediction(self):
         value = random.random()
         for prediction in self.predictions:
