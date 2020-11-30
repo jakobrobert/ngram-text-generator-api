@@ -1,5 +1,7 @@
 from .ngram import NGram
 
+import numpy as np
+
 
 class NGramModel:
     def __init__(self, order):
@@ -8,11 +10,12 @@ class NGramModel:
 
     def build_model_from_tokens(self, tokens):
         self.ngrams = []
+        np_tokens = np.array(tokens, dtype=np.int_)
 
-        for i in range(0, len(tokens) - (self.order - 1)):
+        for i in range(0, len(np_tokens) - (self.order - 1)):
             history_end = i + self.order - 1
-            history = tokens[i:history_end]
-            prediction = tokens[history_end]
+            history = np_tokens[i:history_end]
+            prediction = np_tokens[history_end]
 
             ngram = self.find_ngram_by_history(history)
             if ngram is None:
@@ -56,6 +59,6 @@ class NGramModel:
 
     def find_ngram_by_history(self, history):
         for ngram in self.ngrams:
-            if ngram.history == history:
+            if (ngram.history == history).all():
                 return ngram
         return None
