@@ -58,7 +58,6 @@ def main():
         file.write(generated_text)
 
 
-@profile
 def build_model(training_text, order):
     start_time = time.perf_counter()
     filtered_text = TextProcessor.filter_text(training_text)

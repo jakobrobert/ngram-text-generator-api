@@ -59,6 +59,6 @@ class NGramModel:
 
     def find_ngram_by_history(self, history):
         for ngram in self.ngrams:
-            if np.array_equal(ngram.history, history):
+            if ngram.history.tolist() == history.tolist():
                 return ngram
         return None
