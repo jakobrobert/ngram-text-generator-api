@@ -11,7 +11,7 @@ class NGramModel:
 
         for i in range(0, len(tokens) - (self.order - 1)):
             history_end = i + self.order - 1
-            history = tokens[i:history_end]
+            history = tuple(tokens[i:history_end])
             prediction = tokens[history_end]
 
             ngram = self.find_ngram_by_history(history)
@@ -27,7 +27,7 @@ class NGramModel:
 
     def generate_tokens(self, start_history, length):
         tokens = start_history.copy()
-        curr_history = start_history
+        curr_history = tuple(start_history)
 
         while len(tokens) < length:
             ngram = self.find_ngram_by_history(curr_history)
@@ -37,7 +37,7 @@ class NGramModel:
             prediction = ngram.pick_random_prediction()
             tokens.append(prediction)
 
-            curr_history = tokens[-(self.order - 1):]
+            curr_history = tuple(tokens[-(self.order - 1):])
 
         return tokens
 
