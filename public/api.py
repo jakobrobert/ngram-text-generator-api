@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 import time
 
-from dictionary import Dictionary
-from ngram.ngram_model import NGramModel
-from text_processor import TextProcessor
+from core.dictionary import Dictionary
+from core.ngram.ngram_model import NGramModel
+from core.text_processor import TextProcessor
 
 app = Flask(__name__)
 
