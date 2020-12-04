@@ -46,14 +46,15 @@ class NGramModel:
         order = data["order"]
         model = NGramModel(order)
         model.ngrams = [NGram.from_dict(ngram) for ngram in data["ngrams"]]
-        model.ngrams_by_history = {(history, NGram.from_dict(ngram)) for (history, ngram) in data["ngrams_by_history"]}
+        model.ngrams_by_history = {}
+        for ngram in model.ngrams:
+            model.ngrams_by_history[ngram.history] = ngram
         return model
 
     def to_dict(self):
         return {
             "order": self.order,
-            "ngrams": [ngram.to_dict() for ngram in self.ngrams],
-            "ngrams_by_history": [(history, ngram.to_dict()) for (history, ngram) in self.ngrams_by_history]
+            "ngrams": [ngram.to_dict() for ngram in self.ngrams]
         }
 
     def find_ngram_by_history(self, history):

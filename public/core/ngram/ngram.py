@@ -38,7 +38,7 @@ class NGram:
 
     @staticmethod
     def from_dict(data):
-        history = data["history"]
+        history = tuple(data["history"])
         ngram = NGram(history)
         ngram.predictions = [NGramPrediction.from_dict(prediction) for prediction in data["predictions"]]
         return ngram
