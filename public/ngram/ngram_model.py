@@ -5,10 +5,9 @@ class NGramModel:
     def __init__(self, order):
         self.order = order
         self.ngrams = []
+        self.ngrams_by_history = {}
 
     def build_model_from_tokens(self, tokens):
-        self.ngrams = []
-
         for i in range(0, len(tokens) - (self.order - 1)):
             history_end = i + self.order - 1
             history = tuple(tokens[i:history_end])
@@ -19,6 +18,7 @@ class NGramModel:
                 ngram = NGram(history)
                 ngram.add_prediction(prediction)
                 self.ngrams.append(ngram)
+                self.ngrams_by_history[history] = ngram
             else:
                 ngram.add_prediction(prediction)
 
@@ -46,16 +46,15 @@ class NGramModel:
         order = data["order"]
         model = NGramModel(order)
         model.ngrams = [NGram.from_dict(ngram) for ngram in data["ngrams"]]
+        model.ngrams_by_history = {(history, NGram.from_dict(ngram)) for (history, ngram) in data["ngrams_by_history"]}
         return model
 
     def to_dict(self):
         return {
             "order": self.order,
-            "ngrams": [ngram.to_dict() for ngram in self.ngrams]
+            "ngrams": [ngram.to_dict() for ngram in self.ngrams],
+            "ngrams_by_history": [(history, ngram.to_dict()) for (history, ngram) in self.ngrams_by_history]
         }
 
     def find_ngram_by_history(self, history):
-        for ngram in self.ngrams:
-            if ngram.history == history:
-                return ngram
-        return None
+        return self.ngrams_by_history.get(history, None)
