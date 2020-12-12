@@ -8,11 +8,6 @@ from core.text_processor import TextProcessor
 app = Flask(__name__)
 
 
-@app.route("/ngram-text-generator-api")
-def index():
-    return "Hello World!"
-
-
 @app.route("/ngram-text-generator-api/build-model", methods=['POST'])
 def build_model():
     start_time = time.perf_counter()
