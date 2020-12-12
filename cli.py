@@ -45,14 +45,14 @@ def main():
     input_path = args.input
     output_path = args.output
     order = args.order
-    start_text = args.start
     text_length = args.length
+    start_text = args.start
 
     with open(input_path, "r", encoding="utf8") as file:
         training_text = file.read()
 
     model, dictionary = build_model(training_text, order)
-    generated_text = generate_text(model, dictionary, start_text, text_length)
+    generated_text = generate_text(model, dictionary, text_length, start_text)
 
     with open(output_path, "w", encoding="utf8", newline="") as file:
         file.write(generated_text)
@@ -76,7 +76,7 @@ def build_model(training_text, order):
     return model, dictionary
 
 
-def generate_text(model, dictionary, start_text, length):
+def generate_text(model, dictionary, length, start_text):
     if start_text is None:
         start_history_ids = None
     else:
