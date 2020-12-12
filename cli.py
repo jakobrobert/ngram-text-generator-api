@@ -78,14 +78,13 @@ def build_model(training_text, order):
 
 def generate_text(model, dictionary, start_text, length):
     if start_text is None:
-        # start text not defined, so just use first (order - 1) tokens
-        start_history_ids = list(range(0, model.order - 1))
+        start_history_ids = None
     else:
         start_history_tokens = TextProcessor.tokenize(start_text)
         start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
 
     start_time = time.perf_counter()
-    token_ids = model.generate_tokens(start_history_ids, length)
+    token_ids = model.generate_tokens(length, start_history_ids)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Generate tokens (ms): " + str(elapsed_time))
 

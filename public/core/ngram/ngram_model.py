@@ -25,7 +25,11 @@ class NGramModel:
         for ngram in self.ngrams:
             ngram.calculate_probabilities()
 
-    def generate_tokens(self, start_history, length):
+    def generate_tokens(self, length, start_history=None):
+        if start_history is None:
+            # start history not defined, so use first (order - 1) tokens as default
+            start_history = list(range(0, self.order - 1))
+
         tokens = start_history.copy()
         curr_history = tuple(start_history)
 

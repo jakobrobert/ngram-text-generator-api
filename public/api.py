@@ -64,7 +64,7 @@ def generate_text():
     start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
 
     start_time = time.perf_counter()
-    token_ids = model.generate_tokens(start_history_ids, length)
+    token_ids = model.generate_tokens(length, start_history_ids)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Generate tokens (ms): " + str(elapsed_time))
 
