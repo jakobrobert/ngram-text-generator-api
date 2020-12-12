@@ -35,11 +35,11 @@ def main():
                                help="Path to the output file to store the generated text")
     required_args.add_argument("-r", "--order", type=int, required=True,
                                help="The order of the n-gram model")
-    required_args.add_argument("-s", "--start", type=str, required=True,
-                               help="The start text as a coherent string, must be a (order-1)-gram which occurs\
-                               in the training text")
     required_args.add_argument("-l", "--length", type=int, required=True,
                                help="The desired text length in tokens")
+    required_args.add_argument("-s", "--start", type=str, required=False,
+                               help="The start text as a coherent string, must be a (order-1)-gram which occurs\
+                                   in the training text. Is optional, by default using first (order-1) tokens")
     args = parser.parse_args()
 
     input_path = args.input
@@ -77,9 +77,12 @@ def build_model(training_text, order):
 
 
 def generate_text(model, dictionary, start_text, length):
-    # only a few tokens, not worth measuring time
-    start_history_tokens = TextProcessor.tokenize(start_text)
-    start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
+    if start_text is None:
+        # start text not defined, so just use first (order - 1) tokens
+        start_history_ids = list(range(0, model.order - 1))
+    else:
+        start_history_tokens = TextProcessor.tokenize(start_text)
+        start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
 
     start_time = time.perf_counter()
     token_ids = model.generate_tokens(start_history_ids, length)
