@@ -1,8 +1,8 @@
 import argparse
 import time
 
-from core.ngram.ngram_model import NGramModel
-from core.text_processor import TextProcessor
+from public.core.ngram.ngram_model import NGramModel
+from public.core.text_processor import TextProcessor
 
 # imports for profiler
 import cProfile
