@@ -1,8 +1,8 @@
 import argparse
 import time
 
-from core.ngram.ngram_model import NGramModel
-from core.text_processor import TextProcessor
+from public.core.ngram.ngram_model import NGramModel
+from public.core.text_processor import TextProcessor
 
 # imports for profiler
 import cProfile
@@ -35,24 +35,24 @@ def main():
                                help="Path to the output file to store the generated text")
     required_args.add_argument("-r", "--order", type=int, required=True,
                                help="The order of the n-gram model")
-    required_args.add_argument("-s", "--start", type=str, required=True,
-                               help="The start text as a coherent string, must be a (order-1)-gram which occurs\
-                               in the training text")
     required_args.add_argument("-l", "--length", type=int, required=True,
                                help="The desired text length in tokens")
+    required_args.add_argument("-s", "--start", type=str, required=False,
+                               help="The start text as a coherent string, must be a (order-1)-gram which occurs\
+                                   in the training text. Is optional, by default using first (order-1) tokens")
     args = parser.parse_args()
 
     input_path = args.input
     output_path = args.output
     order = args.order
-    start_text = args.start
     text_length = args.length
+    start_text = args.start
 
     with open(input_path, "r", encoding="utf8") as file:
         training_text = file.read()
 
     model, dictionary = build_model(training_text, order)
-    generated_text = generate_text(model, dictionary, start_text, text_length)
+    generated_text = generate_text(model, dictionary, text_length, start_text)
 
     with open(output_path, "w", encoding="utf8", newline="") as file:
         file.write(generated_text)
@@ -76,13 +76,15 @@ def build_model(training_text, order):
     return model, dictionary
 
 
-def generate_text(model, dictionary, start_text, length):
-    # only a few tokens, not worth measuring time
-    start_history_tokens = TextProcessor.tokenize(start_text)
-    start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
+def generate_text(model, dictionary, length, start_text):
+    if start_text is None:
+        start_history_ids = None
+    else:
+        start_history_tokens = TextProcessor.tokenize(start_text)
+        start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
 
     start_time = time.perf_counter()
-    token_ids = model.generate_tokens(start_history_ids, length)
+    token_ids = model.generate_tokens(length, start_history_ids)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Generate tokens (ms): " + str(elapsed_time))
 

@@ -52,19 +52,25 @@ def build_model():
 def generate_text():
     start_time = time.perf_counter()
     request_data = request.json
-    start_text = request_data["start_text"]
-    length = request_data["length"]
     model = NGramModel.from_dict(request_data["model"])
     dictionary = Dictionary.from_dict(request_data["dictionary"])
+    length = request_data["length"]
+    if "start_text" in request_data:
+        start_text = request_data["start_text"]
+    else:
+        start_text = None
+
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Deserialization (ms): " + str(elapsed_time))
 
-    # only a few tokens, not worth measuring time
-    start_history_tokens = TextProcessor.tokenize(start_text)
-    start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
+    if start_text is None:
+        start_history_ids = None
+    else:
+        start_history_tokens = TextProcessor.tokenize(start_text)
+        start_history_ids = TextProcessor.convert_tokens_from_string_to_id(start_history_tokens, dictionary)
 
     start_time = time.perf_counter()
-    token_ids = model.generate_tokens(start_history_ids, length)
+    token_ids = model.generate_tokens(length, start_history_ids)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Generate tokens (ms): " + str(elapsed_time))
 
