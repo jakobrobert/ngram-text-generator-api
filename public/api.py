@@ -30,7 +30,7 @@ def build_model():
 
     # TODO test code, remove afterwards
     database = Database()
-    database.get_dictionary()
+    print(database.get_dictionary().to_dict())
 
     start_time = time.perf_counter()
     model = NGramModel(order)

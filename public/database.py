@@ -1,5 +1,7 @@
 import mysql.connector
 
+from core.dictionary import Dictionary
+
 
 class Database:
     def __init__(self):
@@ -8,7 +10,7 @@ class Database:
             option_groups="client",
             database="jack0042_ngram_text_generator"
         )
-        self.cursor = self.connector.cursor()
+        self.cursor = self.connector.cursor(dictionary=True)
 
     def __del__(self):
         self.cursor.close()
@@ -19,5 +21,9 @@ class Database:
         self.cursor.execute(sql)
         rows = self.cursor.fetchall()
 
+        dictionary = Dictionary()
         for row in rows:
-            print(row)
+            token = row["token"]
+            dictionary.add_token(token)
+
+        return dictionary
