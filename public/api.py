@@ -5,6 +5,8 @@ from core.dictionary import Dictionary
 from core.ngram.ngram_model import NGramModel
 from core.text_processor import TextProcessor
 
+from database import Database
+
 app = Flask(__name__)
 
 
@@ -25,6 +27,9 @@ def build_model():
     token_ids = TextProcessor.convert_tokens_from_string_to_id(tokens, dictionary)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Pre-processing (ms): " + str(elapsed_time))
+
+    # TODO test code, remove afterwards
+    database = Database()
 
     start_time = time.perf_counter()
     model = NGramModel(order)
