@@ -10,6 +10,10 @@ class Database:
         )
         self.cursor = self.connector.cursor()
 
+    def __del__(self):
+        self.cursor.close()
+        self.connector.close()
+
     def get_dictionary(self):
         sql = "SELECT * FROM dictionary"
         self.cursor.execute(sql)
