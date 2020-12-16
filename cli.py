@@ -62,6 +62,7 @@ def build_model(training_text, order):
     start_time = time.perf_counter()
     filtered_text = TextProcessor.filter_text(training_text)
     tokens = TextProcessor.tokenize(filtered_text)
+    print("Training text token count: " + str(len(tokens)))
     dictionary = TextProcessor.build_dictionary(tokens)
     token_ids = TextProcessor.convert_tokens_from_string_to_id(tokens, dictionary)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
@@ -90,6 +91,7 @@ def generate_text(model, dictionary, length, start_text):
 
     start_time = time.perf_counter()
     tokens = TextProcessor.convert_tokens_from_id_to_string(token_ids, dictionary)
+    print("Generated text token count: " + str(len(tokens)))
     text = TextProcessor.concat_tokens_to_text(tokens)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Post-processing (ms): " + str(elapsed_time))
