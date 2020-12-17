@@ -28,11 +28,6 @@ def build_model():
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Pre-processing (ms): " + str(elapsed_time))
 
-    # TODO test code, remove afterwards
-    database = Database()
-    database.add_dictionary(dictionary)
-    print(database.get_dictionary().to_dict())
-
     start_time = time.perf_counter()
     model = NGramModel(order)
     model.build_model_from_tokens(token_ids)
@@ -47,6 +42,15 @@ def build_model():
     )
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Serialization (ms): " + str(elapsed_time))
+
+    # TODO database test code, remove after integration
+    database = Database()
+    model_id = database.add_model(model)
+    print("model")
+    print(database.get_model(model_id).to_dict())
+    database.add_dictionary(dictionary)
+    print("dictionary")
+    print(database.get_dictionary().to_dict())
 
     return response
 
