@@ -16,6 +16,7 @@ class Database:
         self.cursor.close()
         self.connector.close()
 
+    # TODO add model id
     def get_dictionary(self):
         sql = "SELECT * FROM dictionary"
         self.cursor.execute(sql)
@@ -27,3 +28,10 @@ class Database:
             dictionary.add_token(token)
 
         return dictionary
+
+    # TODO add model id
+    def add_dictionary(self, dictionary):
+        for token in dictionary.tokens:
+            sql = "INSERT INTO dictionary (token) VALUES ('%s')"
+            self.cursor.execute(sql, token)
+            self.connector.commit()

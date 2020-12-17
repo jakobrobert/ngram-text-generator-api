@@ -30,6 +30,7 @@ def build_model():
 
     # TODO test code, remove afterwards
     database = Database()
+    database.add_dictionary(dictionary)
     print(database.get_dictionary().to_dict())
 
     start_time = time.perf_counter()
