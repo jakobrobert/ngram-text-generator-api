@@ -32,6 +32,6 @@ class Database:
     # TODO add model id
     def add_dictionary(self, dictionary):
         for token in dictionary.tokens:
-            sql = "INSERT INTO dictionary (token) VALUES ('%s')"
-            self.cursor.execute(sql, token)
+            sql = "INSERT INTO dictionary (token) VALUES (%s)"
+            self.cursor.execute(sql, (token,))  # trailing comma very important so it is a tuple, else sql syntax error
             self.connector.commit()
