@@ -37,10 +37,9 @@ class Database:
 
         return model_id
 
-    # TODO add model id
-    def get_dictionary(self):
-        sql = "SELECT * FROM dictionary"
-        self.cursor.execute(sql)
+    def get_dictionary_from_model(self, model_id):
+        sql = "SELECT * FROM dictionary WHERE model_id = %s"
+        self.cursor.execute(sql, (model_id,))
         rows = self.cursor.fetchall()
 
         dictionary = Dictionary()
@@ -50,9 +49,8 @@ class Database:
 
         return dictionary
 
-    # TODO add model id
-    def add_dictionary(self, dictionary):
+    def add_dictionary_to_model(self, dictionary, model_id):
         for token in dictionary.tokens:
-            sql = "INSERT INTO dictionary (token) VALUES (%s)"
-            self.cursor.execute(sql, (token,))
+            sql = "INSERT INTO dictionary (token, model_id) VALUES (%s, %s)"
+            self.cursor.execute(sql, (token, model_id))
             self.connector.commit()

@@ -48,9 +48,9 @@ def build_model():
     model_id = database.add_model(model)
     print("model")
     print(database.get_model(model_id).to_dict())
-    database.add_dictionary(dictionary)
+    database.add_dictionary_to_model(dictionary, model_id)
     print("dictionary")
-    print(database.get_dictionary().to_dict())
+    print(database.get_dictionary_from_model(model_id).to_dict())
 
     return response
 
