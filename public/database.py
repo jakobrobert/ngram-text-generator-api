@@ -38,19 +38,22 @@ class Database:
         return model_id
 
     def get_dictionary_from_model(self, model_id):
-        sql = "SELECT * FROM dictionary WHERE model_id = %s"
+        sql = "SELECT * FROM token WHERE model_id = %s"
         self.cursor.execute(sql, (model_id,))
         rows = self.cursor.fetchall()
 
+        # TODO create dictionary differently, directly retrieve ids from database
         dictionary = Dictionary()
         for row in rows:
-            token = row["token"]
+            token = row["text"]
             dictionary.add_token(token)
 
         return dictionary
 
     def add_dictionary_to_model(self, dictionary, model_id):
+        # TODO might optimize by batching sql commands
         for token in dictionary.tokens:
-            sql = "INSERT INTO dictionary (token, model_id) VALUES (%s, %s)"
+            # let database generate the token ids
+            sql = "INSERT INTO token (text, model_id) VALUES (%s, %s)"
             self.cursor.execute(sql, (token, model_id))
             self.connector.commit()
