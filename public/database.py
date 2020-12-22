@@ -52,8 +52,9 @@ class Database:
 
     def add_dictionary_to_model(self, dictionary, model_id):
         # TODO might optimize by batching sql commands
-        for token in dictionary.tokens:
-            # let database generate the token ids
+        for id_, text in dictionary.token_texts_by_id.items():
+            # do not use the ids of dictionary object
+            # instead, let database generate the ids
             sql = "INSERT INTO token (text, model_id) VALUES (%s, %s)"
-            self.cursor.execute(sql, (token, model_id))
+            self.cursor.execute(sql, (text, model_id))
             self.connector.commit()
