@@ -42,18 +42,25 @@ class Database:
         self.cursor.execute(sql, (model_id,))
         rows = self.cursor.fetchall()
 
-        # TODO create dictionary differently, directly retrieve ids from database
-        dictionary = Dictionary()
+        # retrieve token ids from database rather than creating own id
+        # this is important to keep the relation between tokens and ngrams
+        token_texts_by_id = {}
+        token_ids_by_text = {}
+
         for row in rows:
-            token = row["text"]
-            dictionary.add_token(token)
+            id_ = row["id"]
+            text = row["text"]
+            token_texts_by_id[id_] = text
+            token_ids_by_text[text] = id_
+
+        dictionary = Dictionary(token_texts_by_id, token_ids_by_text)
 
         return dictionary
 
     def add_dictionary_to_model(self, dictionary, model_id):
         # TODO might optimize by batching sql commands
         for id_, text in dictionary.token_texts_by_id.items():
-            # do not use the ids of dictionary object
+            # do not use the token ids of dictionary object
             # instead, let database generate the ids
             sql = "INSERT INTO token (text, model_id) VALUES (%s, %s)"
             self.cursor.execute(sql, (text, model_id))

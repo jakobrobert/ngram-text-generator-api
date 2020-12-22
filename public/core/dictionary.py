@@ -1,7 +1,7 @@
 class Dictionary:
-    def __init__(self):
-        self.token_ids_by_text = {}
-        self.token_texts_by_id = {}
+    def __init__(self, token_ids_by_text=None, token_texts_by_id=None):
+        self.token_ids_by_text = token_ids_by_text or {}
+        self.token_texts_by_id = token_texts_by_id or {}
         self.next_token_id = 0
 
     # TODO might optimize by method add_tokens to reduce function calls
