@@ -17,7 +17,7 @@ def build_model():
     order = request_data["order"]
     training_text = request_data["training_text"]
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-    print("Deserialization (ms): " + str(elapsed_time))
+    print("JSON deserialization (ms): " + str(elapsed_time))
 
     start_time = time.perf_counter()
     filtered_text = TextProcessor.filter_text(training_text)
@@ -35,15 +35,7 @@ def build_model():
     print("Build model (ms): " + str(elapsed_time))
 
     start_time = time.perf_counter()
-    response = jsonify(
-        model=model.to_dict(),
-        dictionary=dictionary.to_dict(),
-        token_count=len(tokens)
-    )
-    elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-    print("Serialization (ms): " + str(elapsed_time))
-
-    # TODO database test code, remove after integration
+    # TODO remove debug code
     database = Database()
     model_id = database.add_model(model)
     print("MODEL")
@@ -51,6 +43,19 @@ def build_model():
     database.add_dictionary_to_model(dictionary, model_id)
     print("DICTIONARY")
     print(database.get_dictionary_from_model(model_id).to_dict())
+    elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
+    print("Database serialization (ms): " + str(elapsed_time))
+
+    start_time = time.perf_counter()
+    # TODO only return model id
+    response = jsonify(
+        model_id=model_id,
+        model=model.to_dict(),
+        dictionary=dictionary.to_dict(),
+        token_count=len(tokens),
+    )
+    elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
+    print("JSON serialization (ms): " + str(elapsed_time))
 
     return response
 
@@ -59,6 +64,7 @@ def build_model():
 def generate_text():
     start_time = time.perf_counter()
     request_data = request.json
+    # TODO retrieve model id instead of model and dictionary
     model = NGramModel.from_dict(request_data["model"])
     dictionary = Dictionary.from_dict(request_data["dictionary"])
     length = request_data["length"]
@@ -68,7 +74,7 @@ def generate_text():
         start_text = None
 
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-    print("Deserialization (ms): " + str(elapsed_time))
+    print("JSON deserialization (ms): " + str(elapsed_time))
 
     if start_text is None:
         start_history_ids = None
@@ -94,7 +100,7 @@ def generate_text():
         token_count=len(tokens)
     )
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-    print("Serialization (ms): " + str(elapsed_time))
+    print("JSON Serialization (ms): " + str(elapsed_time))
 
     return response
 
