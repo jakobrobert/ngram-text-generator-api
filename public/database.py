@@ -33,7 +33,24 @@ class Database:
         self.connector.commit()
         model_id = self.cursor.lastrowid
 
-        # TODO add ngrams (separate table, link to model by id)
+        for ngram in model.ngrams:
+            sql = "INSERT INTO ngram (model_id) VALUES (%s)"
+            self.cursor.execute(sql, (model_id,))
+            self.connector.commit()
+            ngram_id = self.cursor.lastrowid
+
+            for token_id in ngram.history:
+                sql = "INSERT INTO ngram_history (ngram_id, token_id) VALUES (%s, %s)"
+                self.cursor.execute(sql, (ngram_id, token_id))
+                self.connector.commit()
+
+            for prediction in ngram.predictions:
+                sql = ("INSERT INTO ngram_prediction "
+                       "(ngram_id, token_id, frequency, probability, probability_threshold)"
+                       "VALUES (%s, %s, %s, %s, %s)")
+                self.cursor.execute(sql, (ngram_id, prediction.token_id, prediction.frequency,
+                                          prediction.probability, prediction.probability_threshold))
+                self.connector.commit()
 
         return model_id
 
@@ -58,7 +75,6 @@ class Database:
         return dictionary
 
     def add_dictionary_to_model(self, dictionary, model_id):
-        # TODO might optimize by batching sql commands
         for id_, text in dictionary.token_texts_by_id.items():
             # do not use the token ids of dictionary object
             # instead, let database generate the ids

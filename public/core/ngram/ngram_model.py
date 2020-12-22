@@ -2,6 +2,8 @@ from .ngram import NGram
 
 
 class NGramModel:
+    # TODO optional arg to directly pass ngrams
+    # in this case, need to create ngrams_by_history
     def __init__(self, order):
         self.order = order
         self.ngrams = []

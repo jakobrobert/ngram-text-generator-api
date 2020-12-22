@@ -4,6 +4,7 @@ from .ngram_prediction import NGramPrediction
 
 
 class NGram:
+    # TODO optional arg to directly pass prediction
     def __init__(self, history):
         self.history = history
         self.predictions = []
