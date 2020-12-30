@@ -9,7 +9,7 @@ class NGramModel:
         self.ngrams = []
         self.ngrams_by_history = {}
 
-    def build_model_from_tokens(self, tokens):
+    def build_model_from_token_indices(self, tokens):
         for i in range(0, len(tokens) - (self.order - 1)):
             history_end = i + self.order - 1
             history = tuple(tokens[i:history_end])

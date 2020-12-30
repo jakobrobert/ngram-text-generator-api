@@ -1,33 +1,31 @@
 class Dictionary:
-    def __init__(self, token_ids_by_text=None, token_texts_by_id=None):
-        self.token_ids_by_text = token_ids_by_text or {}
-        self.token_texts_by_id = token_texts_by_id or {}
-        self.next_token_id = 0
+    def __init__(self, token_indices_by_text=None, token_texts=None):
+        self.token_indices_by_text = token_indices_by_text or {}
+        self.token_texts = token_texts or []
 
     # TODO might optimize by method add_tokens to reduce function calls
     def add_token(self, text):
-        if text in self.token_ids_by_text:
+        if text in self.token_indices_by_text:
             return
-        id_ = self.next_token_id
-        self.next_token_id += 1
-        self.token_ids_by_text[text] = id_
-        self.token_texts_by_id[id_] = text
+        # the index corresponds to the current number of tokens
+        self.token_indices_by_text[text] = len(self.token_texts)
+        self.token_texts.append(text)
 
-    def token_id_by_text(self, text):
-        return self.token_ids_by_text[text]
+    def token_index_by_text(self, text):
+        return self.token_indices_by_text[text]
 
-    def token_text_by_id(self, id_):
-        return self.token_texts_by_id[id_]
+    def token_text_by_index(self, index):
+        return self.token_texts[index]
 
     @staticmethod
     def from_dict(data):
         dictionary = Dictionary()
-        dictionary.token_ids_by_text = data["token_ids_by_text"]
-        dictionary.token_texts_by_id = data["token_texts_by_id"]
+        dictionary.token_indices_by_text = data["token_indices_by_text"]
+        dictionary.token_texts = data["token_texts"]
         return dictionary
 
     def to_dict(self):
         return {
-            "token_ids_by_text": self.token_ids_by_text,
-            "token_texts_by_id": self.token_texts_by_id
+            "token_indices_by_text": self.token_indices_by_text,
+            "token_texts": self.token_texts
         }

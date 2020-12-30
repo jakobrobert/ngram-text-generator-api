@@ -39,16 +39,16 @@ class Database:
             self.connector.commit()
             ngram_id = self.cursor.lastrowid
 
-            for token_id in ngram.history:
-                sql = "INSERT INTO ngram_history (ngram_id, token_id) VALUES (%s, %s)"
-                self.cursor.execute(sql, (ngram_id, token_id))
+            for token_index in ngram.history:
+                sql = "INSERT INTO ngram_history (ngram_id, token_index) VALUES (%s, %s)"
+                self.cursor.execute(sql, (ngram_id, token_index))
                 self.connector.commit()
 
             for prediction in ngram.predictions:
                 sql = ("INSERT INTO ngram_prediction "
-                       "(ngram_id, token_id, frequency, probability, probability_threshold)"
+                       "(ngram_id, token_index, frequency, probability, probability_threshold)"
                        "VALUES (%s, %s, %s, %s, %s)")
-                self.cursor.execute(sql, (ngram_id, prediction.token_id, prediction.frequency,
+                self.cursor.execute(sql, (ngram_id, prediction.token_index, prediction.frequency,
                                           prediction.probability, prediction.probability_threshold))
                 self.connector.commit()
 
@@ -59,25 +59,25 @@ class Database:
         self.cursor.execute(sql, (model_id,))
         rows = self.cursor.fetchall()
 
-        # retrieve token ids from database rather than creating own id
+        # retrieve existing token indices from database rather than creating new indices
         # this is important to keep the relation between tokens and ngrams
-        token_texts_by_id = {}
-        token_ids_by_text = {}
+        token_indices_by_text = {}
+        token_texts = []
 
         for row in rows:
-            id_ = row["id"]
+            index = row["index"]
             text = row["text"]
-            token_texts_by_id[id_] = text
-            token_ids_by_text[text] = id_
+            token_indices_by_text[text] = index
+            # TODO list assignment index out of range -> probably need to use dict instead of list for token_texts
+            token_texts[index] = text
 
-        dictionary = Dictionary(token_texts_by_id, token_ids_by_text)
+        dictionary = Dictionary(token_indices_by_text, token_texts)
 
         return dictionary
 
     def add_dictionary_to_model(self, dictionary, model_id):
-        for id_, text in dictionary.token_texts_by_id.items():
-            # do not use the token ids of dictionary object
-            # instead, let database generate the ids
-            sql = "INSERT INTO token (text, model_id) VALUES (%s, %s)"
-            self.cursor.execute(sql, (text, model_id))
+        for index in range(len(dictionary.token_texts)):
+            text = dictionary.token_text_by_index(index)
+            sql = "INSERT INTO token (model_id, `index`, `text`) VALUES (%s, %s, %s)"
+            self.cursor.execute(sql, (model_id, index, text))
             self.connector.commit()
