@@ -62,22 +62,20 @@ class Database:
         # retrieve existing token indices from database rather than creating new indices
         # this is important to keep the relation between tokens and ngrams
         token_indices_by_text = {}
-        token_texts = []
+        token_texts_by_index = {}
 
         for row in rows:
             index = row["index"]
             text = row["text"]
             token_indices_by_text[text] = index
-            # TODO list assignment index out of range -> probably need to use dict instead of list for token_texts
-            token_texts[index] = text
+            token_texts_by_index[index] = text
 
-        dictionary = Dictionary(token_indices_by_text, token_texts)
+        dictionary = Dictionary(token_indices_by_text, token_texts_by_index)
 
         return dictionary
 
     def add_dictionary_to_model(self, dictionary, model_id):
-        for index in range(len(dictionary.token_texts)):
-            text = dictionary.token_text_by_index(index)
+        for index, text in dictionary.token_texts_by_index.items():
             sql = "INSERT INTO token (model_id, `index`, `text`) VALUES (%s, %s, %s)"
             self.cursor.execute(sql, (model_id, index, text))
             self.connector.commit()
