@@ -48,7 +48,7 @@ class Database:
                 sql = ("INSERT INTO ngram_prediction "
                        "(ngram_id, token_index, frequency, probability, probability_threshold)"
                        "VALUES (%s, %s, %s, %s, %s)")
-                self.cursor.execute(sql, (ngram_id, prediction.token_index, prediction.frequency,
+                self.cursor.execute(sql, (ngram_id, prediction.token, prediction.frequency,
                                           prediction.probability, prediction.probability_threshold))
                 self.connector.commit()
 

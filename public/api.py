@@ -30,7 +30,7 @@ def build_model():
 
     start_time = time.perf_counter()
     model = NGramModel(order)
-    model.build_model_from_token_indices(token_indices)
+    model.build_model_from_tokens(token_indices)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Build model (ms): " + str(elapsed_time))
 

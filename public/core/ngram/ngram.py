@@ -4,10 +4,9 @@ from .ngram_prediction import NGramPrediction
 
 
 class NGram:
-    # TODO optional arg to directly pass prediction
-    def __init__(self, history):
+    def __init__(self, history, predictions=None):
         self.history = history
-        self.predictions = []
+        self.predictions = predictions or []
 
     def add_prediction(self, token):
         index = self.find_prediction_by_token(token)

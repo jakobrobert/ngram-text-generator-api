@@ -2,14 +2,19 @@ from .ngram import NGram
 
 
 class NGramModel:
-    # TODO optional arg to directly pass ngrams
-    # in this case, need to create ngrams_by_history
-    def __init__(self, order):
+    def __init__(self, order, ngrams=None):
         self.order = order
-        self.ngrams = []
-        self.ngrams_by_history = {}
 
-    def build_model_from_token_indices(self, tokens):
+        if ngrams is None:
+            self.ngrams = []
+            self.ngrams_by_history = {}
+        else:
+            self.ngrams = ngrams
+            self.ngrams_by_history = {}
+            for ngram in self.ngrams:
+                self.ngrams_by_history[ngram.history] = ngram
+
+    def build_model_from_tokens(self, tokens):
         for i in range(0, len(tokens) - (self.order - 1)):
             history_end = i + self.order - 1
             history = tuple(tokens[i:history_end])
