@@ -38,11 +38,12 @@ def build_model():
     # TODO remove debug code
     database = Database()
     model_id = database.add_model(model)
-    print("MODEL")
-    print(database.get_model(model_id).to_dict())
+    print("model id: " + str(model_id))
+    # print("MODEL")
+    # print(database.get_model(model_id).to_dict())
     database.add_dictionary_to_model(dictionary, model_id)
-    print("DICTIONARY")
-    print(database.get_dictionary_from_model(model_id).to_dict())
+    # print("DICTIONARY")
+    # print(database.get_dictionary_from_model(model_id).to_dict())
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Database serialization (ms): " + str(elapsed_time))
 
