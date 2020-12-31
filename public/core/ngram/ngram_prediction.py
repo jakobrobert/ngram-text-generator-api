@@ -5,7 +5,7 @@ class NGramPrediction:
         self.probability = probability or 0.0
         self.probability_threshold = probability_threshold or 0.0
 
-    # TODO inline these two functions, might improve performance
+    # TODO Optimize by inlining these two functions
     def matches_token(self, token):
         return self.token == token
 

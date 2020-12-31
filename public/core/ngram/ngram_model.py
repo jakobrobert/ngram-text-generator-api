@@ -68,5 +68,6 @@ class NGramModel:
             "ngrams": [ngram.to_dict() for ngram in self.ngrams]
         }
 
+    # TODO Optimize by inlining this function
     def find_ngram_by_history(self, history):
         return self.ngrams_by_history.get(history, None)

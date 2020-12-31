@@ -9,12 +9,11 @@ class NGram:
         self.predictions = predictions or []
 
     def add_prediction(self, token):
-        index = self.find_prediction_by_token(token)
-        if index == -1:
+        prediction = self.find_prediction_by_token(token)
+        if prediction is None:
             prediction = NGramPrediction(token)
             self.predictions.append(prediction)
         else:
-            prediction = self.predictions[index]
             prediction.increment_frequency()
 
     def pick_random_prediction(self):
@@ -49,9 +48,8 @@ class NGram:
             "predictions": [prediction.to_dict() for prediction in self.predictions]
         }
 
-    # TODO Refactor: return prediction (or None) instead of index
     def find_prediction_by_token(self, token):
-        for i in range(0, len(self.predictions)):
-            if self.predictions[i].matches_token(token):
-                return i
-        return -1
+        for prediction in self.predictions:
+            if prediction.matches_token(token):
+                return prediction
+        return None
