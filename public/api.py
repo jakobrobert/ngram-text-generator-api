@@ -35,25 +35,17 @@ def build_model():
     print("Build model (ms): " + str(elapsed_time))
 
     start_time = time.perf_counter()
-    # TODO remove debug code
     database = Database()
     model_id = database.add_model(model)
     print("model id: " + str(model_id))
-    # print("MODEL")
-    # print(database.get_model(model_id).to_dict())
     database.add_dictionary_to_model(dictionary, model_id)
-    # print("DICTIONARY")
-    # print(database.get_dictionary_from_model(model_id).to_dict())
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Database serialization (ms): " + str(elapsed_time))
 
     start_time = time.perf_counter()
-    # TODO only return model id
+
     response = jsonify(
-        model_id=model_id,
-        model=model.to_dict(),
-        dictionary=dictionary.to_dict(),
-        token_count=len(tokens),
+        model_id=model_id
     )
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("JSON serialization (ms): " + str(elapsed_time))
@@ -65,26 +57,30 @@ def build_model():
 def generate_text():
     start_time = time.perf_counter()
     request_data = request.json
-    # TODO retrieve model id instead of model and dictionary
-    model = NGramModel.from_dict(request_data["model"])
-    dictionary = Dictionary.from_dict(request_data["dictionary"])
+    model_id = request_data["model_id"]
     length = request_data["length"]
     if "start_text" in request_data:
         start_text = request_data["start_text"]
     else:
         start_text = None
-
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("JSON deserialization (ms): " + str(elapsed_time))
 
+    start_time = time.perf_counter()
+    database = Database()
+    model = database.get_model(model_id)
+    dictionary = database.get_dictionary_from_model(model)
+    elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
+    print("Database deserialization (ms): " + str(elapsed_time))
+
     if start_text is None:
-        start_history_ids = None
+        start_history_indices = None
     else:
         start_history_tokens = TextProcessor.tokenize(start_text)
-        start_history_ids = TextProcessor.convert_tokens_from_text_to_index(start_history_tokens, dictionary)
+        start_history_indices = TextProcessor.convert_tokens_from_text_to_index(start_history_tokens, dictionary)
 
     start_time = time.perf_counter()
-    token_ids = model.generate_tokens(length, start_history_ids)
+    token_ids = model.generate_tokens(length, start_history_indices)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Generate tokens (ms): " + str(elapsed_time))
 
