@@ -93,11 +93,10 @@ def generate_text():
 
     start_time = time.perf_counter()
     response = jsonify(
-        text=text,
-        token_count=len(tokens)
+        text=text
     )
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-    print("JSON Serialization (ms): " + str(elapsed_time))
+    print("JSON serialization (ms): " + str(elapsed_time))
 
     return response
 
