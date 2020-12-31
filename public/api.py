@@ -69,7 +69,7 @@ def generate_text():
     start_time = time.perf_counter()
     database = Database()
     model = database.get_model(model_id)
-    dictionary = database.get_dictionary_from_model(model)
+    dictionary = database.get_dictionary_from_model(model_id)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
     print("Database deserialization (ms): " + str(elapsed_time))
 

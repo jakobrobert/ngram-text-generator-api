@@ -72,7 +72,7 @@ class TextProcessor:
     def convert_tokens_from_index_to_text(token_indices, dictionary):
         token_texts = []
         for token_index in token_indices:
-            token = dictionary.token_text_y_index(token_index)
+            token = dictionary.token_text_by_index(token_index)
             token_texts.append(token)
         return token_texts
 
