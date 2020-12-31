@@ -55,25 +55,26 @@ class TextProcessor:
     @staticmethod
     def build_dictionary(tokens):
         dictionary = Dictionary()
+        # TODO replace by dictionary.add_tokens, profile performance
         for token in tokens:
             dictionary.add_token(token)
         return dictionary
 
     @staticmethod
-    def convert_tokens_from_string_to_id(tokens, dictionary):
-        ids = []
-        for token in tokens:
-            id_ = dictionary.id_of_token(token)
-            ids.append(id_)
-        return ids
+    def convert_tokens_from_text_to_index(token_texts, dictionary):
+        indices = []
+        for token_text in token_texts:
+            index = dictionary.token_index_by_text(token_text)
+            indices.append(index)
+        return indices
 
     @staticmethod
-    def convert_tokens_from_id_to_string(ids, dictionary):
-        tokens = []
-        for id_ in ids:
-            token = dictionary.token_by_id(id_)
-            tokens.append(token)
-        return tokens
+    def convert_tokens_from_index_to_text(token_indices, dictionary):
+        token_texts = []
+        for token_index in token_indices:
+            token = dictionary.token_text_by_index(token_index)
+            token_texts.append(token)
+        return token_texts
 
     @staticmethod
     def concat_tokens_to_text(tokens):
@@ -90,7 +91,7 @@ class TextProcessor:
             else:
                 # for both cases, special chars with separation and normal words, separate by space
                 # but only if previous token was not a special char with separation
-                # e.g. "bla (hello)" should be separate "(" by space, but not "hello"
+                # e.g. "bla (hello)" should separate "(" by space, but not "hello"
                 if prev_token not in TextProcessor.SPECIAL_CHARS_WITH_SEPARATION:
                     text += " "
                 text += curr_token

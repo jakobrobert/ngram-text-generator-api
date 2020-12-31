@@ -1,10 +1,11 @@
 class NGramPrediction:
-    def __init__(self, token):
+    def __init__(self, token, frequency=None, probability=None, probability_threshold=None):
         self.token = token
-        self.frequency = 1
-        self.probability = 0.0
-        self.probability_threshold = 0.0
+        self.frequency = frequency or 1
+        self.probability = probability or 0.0
+        self.probability_threshold = probability_threshold or 0.0
 
+    # TODO inline these two functions, might improve performance
     def matches_token(self, token):
         return self.token == token
 
@@ -13,8 +14,7 @@ class NGramPrediction:
 
     @staticmethod
     def from_dict(data):
-        token = data["token"]
-        prediction = NGramPrediction(token)
+        prediction = NGramPrediction(data["token"])
         prediction.frequency = data["frequency"]
         prediction.probability = data["probability"]
         prediction.probability_threshold = data["probability_threshold"]
