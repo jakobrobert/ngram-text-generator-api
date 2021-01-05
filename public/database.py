@@ -10,11 +10,21 @@ class Database:
     def __init__(self):
         self.connector = mysql.connector.connect(option_files="./mysql.cnf", option_groups="client")
         self.cursor = self.connector.cursor(dictionary=True)
-        self.create_tables()
 
     def __del__(self):
         self.cursor.close()
         self.connector.close()
+
+    def delete_tables(self):
+        sql = """
+            DROP TABLE IF EXISTS `ngram_prediction`;
+            DROP TABLE IF EXISTS `ngram_history`;
+            DROP TABLE IF EXISTS `ngram`;
+            DROP TABLE IF EXISTS `token`;
+            DROP TABLE IF EXISTS `model`;
+        """
+        self.cursor.execute(sql, multi=True)
+        self.connector.commit()
 
     def create_tables(self):
         self.create_model_table()
