@@ -18,10 +18,10 @@ class Database:
 
     def create_tables(self):
         self.create_model_table()
+        self.create_token_table()
         self.create_ngram_table()
         self.create_ngram_history_table()
         self.create_ngram_prediction_table()
-        self.create_token_table()
 
     def create_model_table(self):
         sql = """
@@ -29,22 +29,65 @@ class Database:
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `order` tinyint(3) NOT NULL,
                 PRIMARY KEY (`id`)
-            );
+            )
+            """
+        self.cursor.execute(sql)
+        self.connector.commit()
+
+    def create_token_table(self):
+        sql = """
+            CREATE TABLE IF NOT EXISTS `token` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `model_id` int(11) NOT NULL,
+                `index` int(11) NOT NULL,
+                `text` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`),
+                FOREIGN KEY (`model_id`) REFERENCES `model` (`id`)
+            )
             """
         self.cursor.execute(sql)
         self.connector.commit()
 
     def create_ngram_table(self):
-        pass
+        sql = """
+            CREATE TABLE IF NOT EXISTS `ngram` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `model_id` int(11) NOT NULL,
+                PRIMARY KEY (`id`),
+                FOREIGN KEY (`model_id`) REFERENCES `model` (`id`)
+            )
+            """
+        self.cursor.execute(sql)
+        self.connector.commit()
 
     def create_ngram_history_table(self):
-        pass
+        sql = """
+            CREATE TABLE IF NOT EXISTS `ngram_history` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `ngram_id` int(11) NOT NULL,
+                `token_index` int(11) NOT NULL,
+                PRIMARY KEY (`id`),
+                FOREIGN KEY (`ngram_id`) REFERENCES `ngram` (`id`)
+            )
+            """
+        self.cursor.execute(sql)
+        self.connector.commit()
 
     def create_ngram_prediction_table(self):
-        pass
-
-    def create_token_table(self):
-        pass
+        sql = """
+            CREATE TABLE IF NOT EXISTS `ngram_prediction` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `ngram_id` int(11) NOT NULL,
+                `token_index` int(11) NOT NULL,
+                `frequency` int(11) NOT NULL,
+                `probability` double NOT NULL,
+                `probability_threshold` double NOT NULL,
+                PRIMARY KEY (`id`),
+                FOREIGN KEY (`ngram_id`) REFERENCES `ngram` (`id`)
+            )
+            """
+        self.cursor.execute(sql)
+        self.connector.commit()
 
     # TODO Refactor: split into methods
     def get_model(self, id_):
