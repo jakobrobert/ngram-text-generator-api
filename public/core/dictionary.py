@@ -11,13 +11,6 @@ class Dictionary:
                 self.token_texts_by_index[self.curr_token_index] = text
                 self.curr_token_index += 1
 
-    # TODO Optimize by inlining functions
-    def token_index_by_text(self, text):
-        return self.token_indices_by_text[text]
-
-    def token_text_by_index(self, index):
-        return self.token_texts_by_index[index]
-
     @staticmethod
     def from_dict(data):
         dictionary = Dictionary()
