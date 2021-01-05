@@ -10,10 +10,41 @@ class Database:
     def __init__(self):
         self.connector = mysql.connector.connect(option_files="./mysql.cnf", option_groups="client")
         self.cursor = self.connector.cursor(dictionary=True)
+        self.create_tables()
 
     def __del__(self):
         self.cursor.close()
         self.connector.close()
+
+    def create_tables(self):
+        self.create_model_table()
+        self.create_ngram_table()
+        self.create_ngram_history_table()
+        self.create_ngram_prediction_table()
+        self.create_token_table()
+
+    def create_model_table(self):
+        sql = """
+            CREATE TABLE IF NOT EXISTS `model` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `order` tinyint(3) NOT NULL,
+                PRIMARY KEY (`id`)
+            );
+            """
+        self.cursor.execute(sql)
+        self.connector.commit()
+
+    def create_ngram_table(self):
+        pass
+
+    def create_ngram_history_table(self):
+        pass
+
+    def create_ngram_prediction_table(self):
+        pass
+
+    def create_token_table(self):
+        pass
 
     # TODO Refactor: split into methods
     def get_model(self, id_):
