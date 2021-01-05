@@ -55,25 +55,23 @@ class TextProcessor:
     @staticmethod
     def build_dictionary(tokens):
         dictionary = Dictionary()
-        # TODO replace by dictionary.add_tokens, profile performance
-        for token in tokens:
-            dictionary.add_token(token)
+        dictionary.build_from_tokens(tokens)
         return dictionary
 
     @staticmethod
     def convert_tokens_from_text_to_index(token_texts, dictionary):
-        indices = []
+        token_indices = []
         for token_text in token_texts:
-            index = dictionary.token_index_by_text(token_text)
-            indices.append(index)
-        return indices
+            token_index = dictionary.token_indices_by_text[token_text]
+            token_indices.append(token_index)
+        return token_indices
 
     @staticmethod
     def convert_tokens_from_index_to_text(token_indices, dictionary):
         token_texts = []
         for token_index in token_indices:
-            token = dictionary.token_text_by_index(token_index)
-            token_texts.append(token)
+            token_text = dictionary.token_texts_by_index[token_index]
+            token_texts.append(token_text)
         return token_texts
 
     @staticmethod

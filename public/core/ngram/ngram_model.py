@@ -20,7 +20,7 @@ class NGramModel:
             history = tuple(tokens[i:history_end])
             prediction = tokens[history_end]
 
-            ngram = self.find_ngram_by_history(history)
+            ngram = self.ngrams_by_history.get(history, None)
             if ngram is None:
                 ngram = NGram(history)
                 ngram.add_prediction(prediction)
@@ -38,17 +38,17 @@ class NGramModel:
             start_history = list(range(0, self.order - 1))
 
         tokens = start_history.copy()
-        curr_history = tuple(start_history)
+        history = tuple(start_history)
 
         while len(tokens) < length:
-            ngram = self.find_ngram_by_history(curr_history)
+            ngram = self.ngrams_by_history.get(history, None)
             if ngram is None:
                 return tokens
 
             prediction = ngram.pick_random_prediction()
             tokens.append(prediction)
 
-            curr_history = tuple(tokens[-(self.order - 1):])
+            history = tuple(tokens[-(self.order - 1):])
 
         return tokens
 
@@ -67,7 +67,3 @@ class NGramModel:
             "order": self.order,
             "ngrams": [ngram.to_dict() for ngram in self.ngrams]
         }
-
-    # TODO Optimize by inlining this function
-    def find_ngram_by_history(self, history):
-        return self.ngrams_by_history.get(history, None)

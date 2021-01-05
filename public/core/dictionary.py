@@ -4,19 +4,12 @@ class Dictionary:
         self.token_texts_by_index = token_texts_by_index or {}
         self.curr_token_index = 0
 
-    # TODO might optimize by method add_tokens to reduce function calls
-    def add_token(self, text):
-        if text in self.token_indices_by_text:
-            return
-        self.token_indices_by_text[text] = self.curr_token_index
-        self.token_texts_by_index[self.curr_token_index] = text
-        self.curr_token_index += 1
-
-    def token_index_by_text(self, text):
-        return self.token_indices_by_text[text]
-
-    def token_text_by_index(self, index):
-        return self.token_texts_by_index[index]
+    def build_from_tokens(self, token_texts):
+        for text in token_texts:
+            if text not in self.token_indices_by_text:
+                self.token_indices_by_text[text] = self.curr_token_index
+                self.token_texts_by_index[self.curr_token_index] = text
+                self.curr_token_index += 1
 
     @staticmethod
     def from_dict(data):

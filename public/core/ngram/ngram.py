@@ -14,7 +14,7 @@ class NGram:
             prediction = NGramPrediction(token)
             self.predictions.append(prediction)
         else:
-            prediction.increment_frequency()
+            prediction.frequency += 1
 
     def pick_random_prediction(self):
         value = random.random()
@@ -50,6 +50,6 @@ class NGram:
 
     def find_prediction_by_token(self, token):
         for prediction in self.predictions:
-            if prediction.matches_token(token):
+            if prediction.token == token:
                 return prediction
         return None
