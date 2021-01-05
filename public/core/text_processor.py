@@ -55,7 +55,7 @@ class TextProcessor:
     @staticmethod
     def build_dictionary(tokens):
         dictionary = Dictionary()
-        # TODO replace by dictionary.add_tokens, profile performance
+        # TODO replace by dictionary.build_from_tokens, compare performance
         for token in tokens:
             dictionary.add_token(token)
         return dictionary

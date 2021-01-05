@@ -4,7 +4,7 @@ class Dictionary:
         self.token_texts_by_index = token_texts_by_index or {}
         self.curr_token_index = 0
 
-    # TODO might optimize by method add_tokens to reduce function calls
+    # TODO might optimize by method build_from_tokens to reduce function calls
     def add_token(self, text):
         if text in self.token_indices_by_text:
             return
