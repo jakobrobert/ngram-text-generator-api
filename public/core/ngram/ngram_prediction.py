@@ -5,13 +5,6 @@ class NGramPrediction:
         self.probability = probability or 0.0
         self.probability_threshold = probability_threshold or 0.0
 
-    # TODO Optimize by inlining these two functions
-    def matches_token(self, token):
-        return self.token == token
-
-    def increment_frequency(self):
-        self.frequency += 1
-
     @staticmethod
     def from_dict(data):
         prediction = NGramPrediction(data["token"])
