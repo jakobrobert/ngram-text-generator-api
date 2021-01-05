@@ -55,9 +55,7 @@ class TextProcessor:
     @staticmethod
     def build_dictionary(tokens):
         dictionary = Dictionary()
-        # TODO replace by dictionary.build_from_tokens, compare performance
-        for token in tokens:
-            dictionary.add_token(token)
+        dictionary.build_from_tokens(tokens)
         return dictionary
 
     @staticmethod
