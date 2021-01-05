@@ -8,11 +8,7 @@ from core.ngram.ngram import NGram
 
 class Database:
     def __init__(self):
-        self.connector = mysql.connector.connect(
-            option_files="/home/jack0042/.my.cnf",
-            option_groups="client",
-            database="jack0042_ngram_text_generator"
-        )
+        self.connector = mysql.connector.connect(option_files="./mysql.cnf", option_groups="client")
         self.cursor = self.connector.cursor(dictionary=True)
 
     def __del__(self):
