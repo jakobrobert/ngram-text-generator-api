@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify
 import time
 
-from core.dictionary import Dictionary
 from core.ngram.ngram_model import NGramModel
 from core.text_processor import TextProcessor
 
 from database import Database
 
 app = Flask(__name__)
+database = Database()
+database.delete_tables()
+database.create_tables()
 
 
 @app.route("/ngram-text-generator-api/build-model", methods=['POST'])
@@ -35,7 +37,6 @@ def build_model():
     print("Build model (ms): " + str(elapsed_time))
 
     start_time = time.perf_counter()
-    database = Database()
     model_id = database.add_model(model)
     print("model id: " + str(model_id))
     database.add_dictionary_to_model(dictionary, model_id)
@@ -67,7 +68,6 @@ def generate_text():
     print("JSON deserialization (ms): " + str(elapsed_time))
 
     start_time = time.perf_counter()
-    database = Database()
     model = database.get_model(model_id)
     dictionary = database.get_dictionary_from_model(model_id)
     elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
