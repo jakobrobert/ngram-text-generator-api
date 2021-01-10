@@ -1,4 +1,5 @@
 import mysql.connector
+import time
 
 from core.dictionary import Dictionary
 from core.ngram.ngram_model import NGramModel
@@ -147,44 +148,59 @@ class Database:
 
     # TODO Refactor: split into methods
     def add_model(self, model):
+        start_time = time.perf_counter()
         sql = "INSERT INTO model (`order`) VALUES (%s)"
         self.cursor.execute(sql, (model.order,))
         self.connector.commit()
         model_id = self.cursor.lastrowid
+        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
+        print("Insert model (ms): " + str(elapsed_time))
 
-        ngram_ids = []
-
-        # add all ngrams
+        # add all ngrams using only one query
+        start_time = time.perf_counter()
+        values = []
         for _ in model.ngrams:
             sql = "INSERT INTO ngram (model_id) VALUES (%s)"
-            self.cursor.execute(sql, (model_id,))
-            self.connector.commit()
-            ngram_ids.append(self.cursor.lastrowid)
+            values.append((model_id,))
+        self.cursor.executemany(sql, values)
+        self.connector.commit()
+        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
+        print("Insert ngrams (ms): " + str(elapsed_time))
+
+        # for executemany, lastrowid returns the id of the first row
+        # can get the other ids just by incrementing
+        ngram_start_id = self.cursor.lastrowid
 
         # add history for all ngrams using only one query
+        start_time = time.perf_counter()
         values = []
-        for i in range(len(ngram_ids)):
-            ngram_id = ngram_ids[i]
-            ngram = model.ngrams[i]
+        ngram_id = ngram_start_id
+        for ngram in model.ngrams:
             for token_index in ngram.history:
                 sql = "INSERT INTO ngram_history (ngram_id, token_index) VALUES (%s, %s)"
                 values.append((ngram_id, token_index))
+            ngram_id += 1
         self.cursor.executemany(sql, values)
         self.connector.commit()
+        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
+        print("Insert ngram_history (ms): " + str(elapsed_time))
 
         # add predictions for all ngrams using only one query
+        start_time = time.perf_counter()
         values = []
-        for i in range(len(ngram_ids)):
-            ngram_id = ngram_ids[i]
-            ngram = model.ngrams[i]
+        ngram_id = ngram_start_id
+        for ngram in model.ngrams:
             for prediction in ngram.predictions:
                 sql = ("INSERT INTO ngram_prediction "
                        "(ngram_id, token_index, frequency, probability, probability_threshold)"
                        "VALUES (%s, %s, %s, %s, %s)")
                 values.append((ngram_id, prediction.token, prediction.frequency,
                                prediction.probability, prediction.probability_threshold))
+            ngram_id += 1
         self.cursor.executemany(sql, values)
         self.connector.commit()
+        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
+        print("Insert ngram_prediction (ms): " + str(elapsed_time))
 
         return model_id
 
