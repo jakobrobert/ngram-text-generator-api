@@ -148,8 +148,6 @@ class Database:
 
     # TODO Refactor: split into methods
     def add_model(self, model):
-        start_time = time.perf_counter()
-
         sql = "INSERT INTO model (`order`) VALUES (%s)"
         self.cursor.execute(sql, (model.order,))
         self.connector.commit()
@@ -192,9 +190,6 @@ class Database:
         self.cursor.executemany(sql, values)
         self.connector.commit()
 
-        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-        print("add_model (ms): " + str(elapsed_time))
-
         return model_id
 
     def get_dictionary_from_model(self, model_id):
@@ -216,7 +211,6 @@ class Database:
         return dictionary
 
     def add_dictionary_to_model(self, dictionary, model_id):
-        start_time = time.perf_counter()
         # add all tokens using only one query
         sql = "INSERT INTO token (model_id, `index`, `text`) VALUES (%s, %s, %s)"
         values = []
@@ -224,6 +218,3 @@ class Database:
             values.append((model_id, index, text))
         self.cursor.executemany(sql, values)
         self.connector.commit()
-
-        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-        print("add_dictionary_to_model (ms): " + str(elapsed_time))
