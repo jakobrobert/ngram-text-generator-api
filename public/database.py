@@ -161,17 +161,19 @@ class Database:
             self.connector.commit()
             ngram_ids.append(self.cursor.lastrowid)
 
-        # TODO optimize, combine all inserts into one query
-        # add history for all ngrams
+        # add history for all ngrams using only one query
+        values = []
         for i in range(len(ngram_ids)):
             ngram_id = ngram_ids[i]
             ngram = model.ngrams[i]
             for token_index in ngram.history:
                 sql = "INSERT INTO ngram_history (ngram_id, token_index) VALUES (%s, %s)"
-                self.cursor.execute(sql, (ngram_id, token_index))
-                self.connector.commit()
+                values.append((ngram_id, token_index))
+        self.cursor.executemany(sql, values)
+        self.connector.commit()
 
-        # add predictions for all ngrams
+        # add predictions for all ngrams using only one query
+        values = []
         for i in range(len(ngram_ids)):
             ngram_id = ngram_ids[i]
             ngram = model.ngrams[i]
@@ -179,9 +181,10 @@ class Database:
                 sql = ("INSERT INTO ngram_prediction "
                        "(ngram_id, token_index, frequency, probability, probability_threshold)"
                        "VALUES (%s, %s, %s, %s, %s)")
-                self.cursor.execute(sql, (ngram_id, prediction.token, prediction.frequency,
-                                          prediction.probability, prediction.probability_threshold))
-                self.connector.commit()
+                values.append((ngram_id, prediction.token, prediction.frequency,
+                               prediction.probability, prediction.probability_threshold))
+        self.cursor.executemany(sql, values)
+        self.connector.commit()
 
         return model_id
 
