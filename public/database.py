@@ -1,4 +1,5 @@
 import mysql.connector
+import time
 
 from core.dictionary import Dictionary
 from core.ngram.ngram_model import NGramModel
@@ -152,27 +153,42 @@ class Database:
         self.connector.commit()
         model_id = self.cursor.lastrowid
 
-        # add all ngrams
+        # add all ngrams using only one query
+        sql = "INSERT INTO ngram (model_id) VALUES (%s)"
+        values = []
+        for _ in model.ngrams:
+            values.append((model_id,))
+        self.cursor.executemany(sql, values)
+        self.connector.commit()
+
+        # for executemany, lastrowid returns the id of the first row
+        # can get the other ids just by incrementing
+        ngram_start_id = self.cursor.lastrowid
+
+        # add history for all ngrams using only one query
+        sql = "INSERT INTO ngram_history (ngram_id, token_index) VALUES (%s, %s)"
+        values = []
+        ngram_id = ngram_start_id
         for ngram in model.ngrams:
-            sql = "INSERT INTO ngram (model_id) VALUES (%s)"
-            self.cursor.execute(sql, (model_id,))
-            self.connector.commit()
-            ngram_id = self.cursor.lastrowid
-
-            # add history of current ngram
             for token_index in ngram.history:
-                sql = "INSERT INTO ngram_history (ngram_id, token_index) VALUES (%s, %s)"
-                self.cursor.execute(sql, (ngram_id, token_index))
-                self.connector.commit()
+                values.append((ngram_id, token_index))
+            ngram_id += 1
+        self.cursor.executemany(sql, values)
+        self.connector.commit()
 
-            # add predictions of current ngram
+        # add predictions for all ngrams using only one query
+        sql = ("INSERT INTO ngram_prediction "
+               "(ngram_id, token_index, frequency, probability, probability_threshold)"
+               "VALUES (%s, %s, %s, %s, %s)")
+        values = []
+        ngram_id = ngram_start_id
+        for ngram in model.ngrams:
             for prediction in ngram.predictions:
-                sql = ("INSERT INTO ngram_prediction "
-                       "(ngram_id, token_index, frequency, probability, probability_threshold)"
-                       "VALUES (%s, %s, %s, %s, %s)")
-                self.cursor.execute(sql, (ngram_id, prediction.token, prediction.frequency,
-                                          prediction.probability, prediction.probability_threshold))
-                self.connector.commit()
+                values.append((ngram_id, prediction.token, prediction.frequency,
+                               prediction.probability, prediction.probability_threshold))
+            ngram_id += 1
+        self.cursor.executemany(sql, values)
+        self.connector.commit()
 
         return model_id
 
@@ -195,7 +211,10 @@ class Database:
         return dictionary
 
     def add_dictionary_to_model(self, dictionary, model_id):
+        # add all tokens using only one query
+        sql = "INSERT INTO token (model_id, `index`, `text`) VALUES (%s, %s, %s)"
+        values = []
         for index, text in dictionary.token_texts_by_index.items():
-            sql = "INSERT INTO token (model_id, `index`, `text`) VALUES (%s, %s, %s)"
-            self.cursor.execute(sql, (model_id, index, text))
-            self.connector.commit()
+            values.append((model_id, index, text))
+        self.cursor.executemany(sql, values)
+        self.connector.commit()
