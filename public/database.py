@@ -148,31 +148,24 @@ class Database:
 
     # TODO Refactor: split into methods
     def add_model(self, model):
-        start_time = time.perf_counter()
         sql = "INSERT INTO model (`order`) VALUES (%s)"
         self.cursor.execute(sql, (model.order,))
         self.connector.commit()
         model_id = self.cursor.lastrowid
-        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-        print("Insert model (ms): " + str(elapsed_time))
 
         # add all ngrams using only one query
-        start_time = time.perf_counter()
         values = []
         for _ in model.ngrams:
             sql = "INSERT INTO ngram (model_id) VALUES (%s)"
             values.append((model_id,))
         self.cursor.executemany(sql, values)
         self.connector.commit()
-        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-        print("Insert ngrams (ms): " + str(elapsed_time))
 
         # for executemany, lastrowid returns the id of the first row
         # can get the other ids just by incrementing
         ngram_start_id = self.cursor.lastrowid
 
         # add history for all ngrams using only one query
-        start_time = time.perf_counter()
         values = []
         ngram_id = ngram_start_id
         for ngram in model.ngrams:
@@ -182,11 +175,8 @@ class Database:
             ngram_id += 1
         self.cursor.executemany(sql, values)
         self.connector.commit()
-        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-        print("Insert ngram_history (ms): " + str(elapsed_time))
 
         # add predictions for all ngrams using only one query
-        start_time = time.perf_counter()
         values = []
         ngram_id = ngram_start_id
         for ngram in model.ngrams:
@@ -199,8 +189,6 @@ class Database:
             ngram_id += 1
         self.cursor.executemany(sql, values)
         self.connector.commit()
-        elapsed_time = int((time.perf_counter() - start_time) * 1000.0)
-        print("Insert ngram_prediction (ms): " + str(elapsed_time))
 
         return model_id
 
